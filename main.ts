@@ -19,7 +19,8 @@ const ENTRY = [
   "I've learned to check for a power cord before I check for dry soil, so from now on I only water things that can't short-circuit.",
 ].join('\n');
 
-// Self-check the gate: 1-400 characters, not only white space, two lines.
+// Self-check the gate: 1-400 characters, not only white space, two lines,
+// each line exactly one sentence (one terminal period, none inside).
 const chars = [...ENTRY].length;
 if (chars < 1 || chars > 400) {
   throw new Error(`entry is ${chars} characters, outside the 1-400 gate`);
@@ -27,8 +28,14 @@ if (chars < 1 || chars > 400) {
 if (ENTRY.trim().length === 0) {
   throw new Error('entry is only white space');
 }
-if (ENTRY.split('\n').length !== 2) {
+const lines = ENTRY.split('\n');
+if (lines.length !== 2) {
   throw new Error('entry must be exactly two lines');
+}
+for (const line of lines) {
+  if (!line.endsWith('.') || line.slice(0, -1).includes('.')) {
+    throw new Error(`line is not exactly one sentence: ${line}`);
+  }
 }
 
 mkdirSync(OUTPUT_DIR, { recursive: true });
